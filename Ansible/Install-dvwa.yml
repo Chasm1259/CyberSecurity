@@ -1,0 +1,36 @@
+---
+- name: Activity 3 Playbook
+  hosts: webservers
+  become: true
+  tasks:
+
+  - name: Install docker.io
+    apt:
+      force_apt_get: yes
+      update_cache: yes
+      name: docker.io
+      state: present
+
+  - name: Install pip3
+    apt:
+      force_apt_get: yes
+      name: python3-pip
+      state: present
+
+  - name: Install Docker
+    pip:
+      name: docker
+      state: present
+
+  - name: Download/Launch dvwa
+    docker_container:
+      name: dvwa
+      image: cyberxsecurity/dvwa
+      state: started
+      restart_policy: always
+      published_ports: 80:80
+
+  - name: Enable docker service
+    systemd:
+      name: docker
+      enabled: yes
